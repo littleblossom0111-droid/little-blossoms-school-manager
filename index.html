@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Little Blossoms • School Manager</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#718096;--primary:#6c5ce7;--primary2:#8e7cf6;--green:#16a085;--red:#e74c3c;--border:#e7eaf1;--shadow:0 8px 30px rgba(30,35,60,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial;color:var(--text)}
+button,input,select{font:inherit}button{cursor:pointer;border:0}.layout{display:flex;min-height:100vh}.side{width:245px;background:#17132b;color:white;padding:24px 16px;position:fixed;inset:0 auto 0 0;z-index:5}.brand{font-size:23px;font-weight:800;padding:8px 12px 26px}.brand span{display:block;font-size:11px;font-weight:500;color:#bdb8db;margin-top:4px;letter-spacing:1px}.nav button{width:100%;background:transparent;color:#c9c5dc;text-align:left;padding:13px 14px;border-radius:11px;margin:3px 0;font-weight:600}.nav button.active,.nav button:hover{background:#302a52;color:#fff}.main{margin-left:245px;width:calc(100% - 245px);padding:25px;max-width:1500px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.top h1{margin:0;font-size:27px}.top p{margin:5px 0 0;color:var(--muted);font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{padding:10px 14px;border-radius:9px;background:#ecebfa;color:#5144bb;font-weight:700}.btn.primary{background:var(--primary);color:white}.btn.green{background:#e6f8f2;color:#087a5f}.btn.red{background:#fdebea;color:#b93125}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}.stat{background:var(--card);padding:19px;border:1px solid var(--border);border-radius:15px;box-shadow:var(--shadow)}.stat .label{font-size:12px;color:var(--muted);font-weight:700}.stat .num{font-size:27px;font-weight:800;margin-top:8px}.stat small{color:var(--muted);display:block;margin-top:5px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{background:var(--card);border:1px solid var(--border);border-radius:15px;box-shadow:var(--shadow);padding:18px;margin-bottom:18px}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}.panel h2{font-size:17px;margin:0}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.input{width:100%;padding:10px 11px;border:1px solid #dfe3ed;border-radius:8px;outline:none;background:#fff}.input:focus{border-color:var(--primary)}.filters .input{width:auto;min-width:160px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #edf0f5;font-size:13px}th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;background:#fafbfe}.money{font-weight:800}.positive{color:#07815f}.negative{color:#c7352d}.empty{text-align:center;color:var(--muted);padding:30px}.page{display:none}.page.active{display:block}.modalbg{display:none;position:fixed;inset:0;background:rgba(12,12,25,.5);z-index:20;align-items:center;justify-content:center;padding:18px}.modalbg.show{display:flex}.modal{background:white;width:560px;max-width:100%;max-height:90vh;overflow:auto;border-radius:17px;padding:22px}.modal h2{margin:0 0 18px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:11px;font-weight:800;color:#667085;margin-bottom:5px}.field.full{grid-column:1/-1}.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.badge{display:inline-block;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:800;background:#efedff;color:#5b4dc5}.mobilebar{display:none}.notice{padding:11px 13px;background:#fff8e5;border:1px solid #f4e0a5;border-radius:10px;color:#795d00;font-size:12px;margin-bottom:15px}
+@media(max-width:950px){.cards{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.side{width:210px}.main{margin-left:210px;width:calc(100% - 210px)}}
+@media(max-width:650px){.side{display:none}.main{margin-left:0;width:100%;padding:15px;padding-bottom:75px}.cards{grid-template-columns:1fr 1fr;gap:9px}.stat{padding:14px}.stat .num{font-size:20px}.top{align-items:flex-start;gap:10px}.top h1{font-size:22px}.mobilebar{display:flex;position:fixed;bottom:0;left:0;right:0;background:#17132b;z-index:10;padding:7px;justify-content:space-around}.mobilebar button{background:none;color:#ddd;padding:8px;font-size:10px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.filters .input{width:100%}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="side">
+  <div class="brand">🌸 Little Blossoms<span>PLAY SCHOOL • MANAGEMENT</span></div>
+  <div class="nav">
+    <button class="active" data-page="dashboard">📊 Dashboard</button>
+    <button data-page="students">👧 Students</button>
+    <button data-page="fees">💳 Fee Collection</button>
+    <button data-page="expenses">🧾 Expenses</button>
+    <button data-page="backup">💾 Backup & Data</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="top">
+    <div><h1 id="pageTitle">Dashboard</h1><p>Little Blossoms School Management System</p></div>
+    <div class="actions"><button class="btn primary" onclick="openStudent()">+ Add Student</button><button class="btn green" onclick="openFee()">+ Add Fee</button></div>
+  </div>
+
+  <section id="dashboard" class="page active">
+    <div class="notice">Your records are stored in this browser automatically. Use <b>Backup & Data</b> regularly so you have a copy of your school data.</div>
+    <div class="filters"><input id="dashMonth" class="input" type="month" onchange="renderDashboard()"></div>
+    <div class="cards">
+      <div class="stat"><div class="label">TOTAL STUDENTS</div><div class="num" id="sStudents">0</div><small>Currently registered</small></div>
+      <div class="stat"><div class="label">REGISTRATION COLLECTED</div><div class="num" id="sReg">₹0</div><small>All students</small></div>
+      <div class="stat"><div class="label">FEE THIS MONTH</div><div class="num positive" id="sFee">₹0</div><small id="sFeeSub">Collected</small></div>
+      <div class="stat"><div class="label">EXPENSE THIS MONTH</div><div class="num negative" id="sExpense">₹0</div><small>Recorded expenses</small></div>
+    </div>
+    <div class="cards">
+      <div class="stat"><div class="label">MONTH BALANCE</div><div class="num" id="sBalance">₹0</div><small>Fee collected − expenses</small></div>
+      <div class="stat"><div class="label">FEE PENDING</div><div class="num" id="sPending">₹0</div><small>Based on monthly fee set for students</small></div>
+      <div class="stat"><div class="label">TOTAL EXPENSES</div><div class="num" id="sAllExpense">₹0</div><small>All recorded</small></div>
+      <div class="stat"><div class="label">ACTIVE MONTH</div><div class="num" id="sMonth">—</div><small>Dashboard period</small></div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><div class="panelhead"><h2>Recent Fee Collections</h2><button class="btn" onclick="go('fees')">View All</button></div><div id="recentFees"></div></div>
+      <div class="panel"><div class="panelhead"><h2>Recent Expenses</h2><button class="btn" onclick="go('expenses')">View All</button></div><div id="recentExpenses"></div></div>
+    </div>
+  </section>
+
+  <section id="students" class="page">
+    <div class="panel"><div class="panelhead"><h2>Student Registration <span id="studentCount" class="badge">0</span></h2><button class="btn primary" onclick="openStudent()">+ Add Student</button></div>
+      <div class="filters"><input id="studentSearch" class="input" placeholder="Search student / parent / phone" oninput="renderStudents()"></div>
+      <div class="tablewrap"><table><thead><tr><th>Student</th><th>Parent</th><th>Phone</th><th>Monthly Fee</th><th>Registration</th><th>Actions</th></tr></thead><tbody id="studentRows"></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="fees" class="page">
+    <div class="panel"><div class="panelhead"><h2>Monthly Fee Collection</h2><button class="btn primary" onclick="openFee()">+ Add Fee</button></div>
+      <div class="filters"><input id="feeMonth" class="input" type="month" onchange="renderFees()"><input id="feeSearch" class="input" placeholder="Search student" oninput="renderFees()"></div>
+      <div class="tablewrap"><table><thead><tr><th>Date</th><th>Month</th><th>Student</th><th>Amount</th><th>Mode</th><th>Note</th><th>Actions</th></tr></thead><tbody id="feeRows"></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="expenses" class="page">
+    <div class="panel"><div class="panelhead"><h2>Expenses</h2><button class="btn primary" onclick="openExpense()">+ Add Expense</button></div>
+      <div class="filters"><input id="expenseMonth" class="input" type="month" onchange="renderExpenses()"><input id="expenseSearch" class="input" placeholder="Search expense / category" oninput="renderExpenses()"></div>
+      <div class="tablewrap"><table><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Actions</th></tr></thead><tbody id="expenseRows"></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="backup" class="page">
+    <div class="panel"><h2>Backup & Data</h2><p style="color:#718096">The app uses your browser's local storage. Export a backup JSON file regularly. You can restore it on another browser/device.</p>
+      <div class="actions"><button class="btn primary" onclick="exportData()">⬇ Export Backup</button><button class="btn" onclick="document.getElementById('importFile').click()">⬆ Restore Backup</button><button class="btn red" onclick="clearAll()">Delete All Data</button><input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)"></div>
+      <hr style="border:0;border-top:1px solid #eee;margin:22px 0">
+      <div id="dataInfo"></div>
+      <div style="margin-top:18px"><button class="btn" onclick="repairData()">🔧 Repair / Check Data</button><span id="repairMsg" style="margin-left:10px;font-size:12px;color:#087a5f"></span></div>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="mobilebar">
+<button onclick="go('dashboard')">📊<br>Home</button><button onclick="go('students')">👧<br>Students</button><button onclick="go('fees')">💳<br>Fees</button><button onclick="go('expenses')">🧾<br>Expenses</button>
+</div>
+
+<div id="modalBg" class="modalbg"><div class="modal" id="modal"></div></div>
+
+<script>
+const KEY='little_blossoms_school_v1';
+let db;
+try{
+  const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+  db = (saved && typeof saved === 'object') ? saved : {students:[],fees:[],expenses:[]};
+}catch(e){
+  db = {students:[],fees:[],expenses:[]};
+}
+db.students = Array.isArray(db.students) ? db.students : [];
+db.fees = Array.isArray(db.fees) ? db.fees : [];
+db.expenses = Array.isArray(db.expenses) ? db.expenses : [];
+db.students = db.students.map(s => ({...s, id: s.id || uid()}));
+db.fees = db.fees.map(f => ({...f, id: f.id || uid()}));
+db.expenses = db.expenses.map(e => ({...e, id: e.id || uid()}));
+localStorage.setItem(KEY, JSON.stringify(db));
+const today=()=>new Date().toISOString().slice(0,10);
+const month=()=>today().slice(0,7);
+const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
+function save(){
+  db = {
+    students: Array.isArray(db.students) ? db.students : [],
+    fees: Array.isArray(db.fees) ? db.fees : [],
+    expenses: Array.isArray(db.expenses) ? db.expenses : []
+  };
+  localStorage.setItem(KEY, JSON.stringify(db));
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function uid(){
+  if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+'_'+Math.random().toString(36).slice(2);
+}
+function go(page){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(page).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
+ document.getElementById('pageTitle').textContent={dashboard:'Dashboard',students:'Students',fees:'Fee Collection',expenses:'Expenses',backup:'Backup & Data'}[page];
+ if(page==='dashboard')renderDashboard(); if(page==='students')renderStudents(); if(page==='fees')renderFees(); if(page==='expenses')renderExpenses(); if(page==='backup')renderBackup();
+}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.page));
+document.getElementById('dashMonth').value=month();document.getElementById('feeMonth').value=month();document.getElementById('expenseMonth').value=month();
+
+function openStudent(id){
+ const s=db.students.find(x=>x.id===id)||{id:'',name:'',dob:'',parent:'',phone:'',className:'',monthlyFee:'',regAmount:'',regDate:today(),note:''};
+ modal.innerHTML=`<h2>${id?'Edit Student':'Register New Student'}</h2><div class="formgrid">
+ <div class="field"><label>STUDENT NAME *</label><input id="f_name" class="input" value="${esc(s.name)}"></div>
+ <div class="field"><label>DATE OF BIRTH</label><input id="f_dob" type="date" class="input" value="${s.dob}"></div>
+ <div class="field"><label>PARENT / GUARDIAN</label><input id="f_parent" class="input" value="${esc(s.parent)}"></div>
+ <div class="field"><label>PHONE</label><input id="f_phone" class="input" value="${esc(s.phone)}"></div>
+ <div class="field"><label>CLASS</label><input id="f_class" class="input" placeholder="Play Group / Nursery..." value="${esc(s.className)}"></div>
+ <div class="field"><label>MONTHLY FEE (₹)</label><input id="f_monthly" type="number" class="input" value="${s.monthlyFee}"></div>
+ <div class="field"><label>REGISTRATION AMOUNT (₹)</label><input id="f_reg" type="number" class="input" value="${s.regAmount}"></div>
+ <div class="field"><label>REGISTRATION DATE</label><input id="f_regdate" type="date" class="input" value="${s.regDate||today()}"></div>
+ <div class="field full"><label>NOTE</label><input id="f_note" class="input" value="${esc(s.note)}"></div></div>
+ <div class="modalfoot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveStudent('${id}')">Save Student</button></div>`;
+ openModal();
+}
+function saveStudent(id){
+ const get = x => document.getElementById(x);
+ const name=get('f_name').value.trim();
+ if(!name){alert('Student name zaroori hai.');return;}
+
+ const studentId = id && String(id).trim() ? String(id) : uid();
+ const obj={
+   id:studentId,
+   name:name,
+   dob:get('f_dob').value,
+   parent:get('f_parent').value.trim(),
+   phone:get('f_phone').value.trim(),
+   className:get('f_class').value.trim(),
+   monthlyFee:Number(get('f_monthly').value)||0,
+   regAmount:Number(get('f_reg').value)||0,
+   regDate:get('f_regdate').value||today(),
+   note:get('f_note').value.trim()
+ };
+
+ const index=db.students.findIndex(s=>String(s.id)===studentId);
+ if(index === -1){
+   db.students.push(obj);                 // ALWAYS append a new student
+ }else{
+   db.students[index]=obj;                // Only edit the matching student
+ }
+
+ save();
+ closeModal();
+ renderAll();
+ alert(index === -1 ? 'Student successfully added.' : 'Student successfully updated.');
+}
+function deleteStudent(id){
+ const s=db.students.find(x=>x.id===id);if(!s)return;
+ if(confirm(`Delete ${s.name}? Student delete karne se uski fee history delete nahi hogi.`)){db.students=db.students.filter(x=>x.id!==id);save();renderStudents();renderDashboard();}
+}
+function renderStudents(){
+ const countEl=document.getElementById('studentCount');
+ if(countEl) countEl.textContent=db.students.length+' total';
+ const q=(studentSearch.value||'').toLowerCase();
+ const rows=db.students.filter(s=>(s.name+' '+s.parent+' '+s.phone).toLowerCase().includes(q));
+ studentRows.innerHTML=rows.length?rows.map(s=>`<tr><td><b>${esc(s.name)}</b><br><span class="badge">${esc(s.className||'No class')}</span></td><td>${esc(s.parent)}</td><td>${esc(s.phone)}</td><td>${money(s.monthlyFee)}</td><td>${money(s.regAmount)}<br><small>${s.regDate||''}</small></td><td><button class="btn" onclick="openStudent('${s.id}')">Edit</button> <button class="btn red" onclick="deleteStudent('${s.id}')">Delete</button></td></tr>`).join(''):`<tr><td colspan="6" class="empty">No students yet. Click “Add Student”.</td></tr>`;
+}
+
+function openFee(id){
+ const f=db.fees.find(x=>x.id===id)||{id:'',studentId:db.students[0]?.id||'',date:today(),month:month(),amount:'',mode:'Cash',note:''};
+ if(!db.students.length){alert('Pehle student register karo.');go('students');return;}
+ modal.innerHTML=`<h2>${id?'Edit Fee':'Add Fee Collection'}</h2><div class="formgrid">
+ <div class="field full"><label>STUDENT *</label><select id="ff_student" class="input">${db.students.map(s=>`<option value="${s.id}" ${s.id===f.studentId?'selected':''}>${esc(s.name)} — ${money(s.monthlyFee)}</option>`).join('')}</select></div>
+ <div class="field"><label>PAYMENT DATE *</label><input id="ff_date" type="date" class="input" value="${f.date}"></div>
+ <div class="field"><label>FOR MONTH *</label><input id="ff_month" type="month" class="input" value="${f.month}"></div>
+ <div class="field"><label>AMOUNT (₹) *</label><input id="ff_amount" type="number" class="input" value="${f.amount}"></div>
+ <div class="field"><label>PAYMENT MODE</label><select id="ff_mode" class="input">${['Cash','UPI','Bank Transfer','Card','Other'].map(x=>`<option ${x===f.mode?'selected':''}>${x}</option>`).join('')}</select></div>
+ <div class="field full"><label>NOTE / RECEIPT NO.</label><input id="ff_note" class="input" value="${esc(f.note)}"></div></div>
+ <div class="modalfoot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveFee('${id}')">Save Fee</button></div>`;
+ openModal();
+}
+function saveFee(id){
+ const get = x => document.getElementById(x);
+ const feeId = id && String(id).trim() ? String(id) : uid();
+ const obj={
+   id:feeId,
+   studentId:get('ff_student').value,
+   date:get('ff_date').value||today(),
+   month:get('ff_month').value||month(),
+   amount:Number(get('ff_amount').value)||0,
+   mode:get('ff_mode').value,
+   note:get('ff_note').value.trim()
+ };
+ if(!obj.studentId || obj.amount<=0){alert('Student aur amount check karo.');return;}
+ const index=db.fees.findIndex(f=>String(f.id)===feeId);
+ if(index===-1) db.fees.push(obj); else db.fees[index]=obj;
+ save();closeModal();renderAll();
+}
+function deleteFee(id){if(confirm('Delete this fee entry?')){db.fees=db.fees.filter(x=>x.id!==id);save();renderFees();renderDashboard();}}
+function renderFees(){
+ const m=feeMonth.value||month(),q=(feeSearch.value||'').toLowerCase();
+ const rows=db.fees.filter(f=>f.month===m).filter(f=>(db.students.find(s=>s.id===f.studentId)?.name||'').toLowerCase().includes(q)).sort((a,b)=>b.date.localeCompare(a.date));
+ feeRows.innerHTML=rows.length?rows.map(f=>{let s=db.students.find(x=>x.id===f.studentId);return `<tr><td>${f.date}</td><td>${f.month}</td><td><b>${esc(s?.name||'Deleted student')}</b></td><td class="money positive">${money(f.amount)}</td><td>${esc(f.mode)}</td><td>${esc(f.note)}</td><td><button class="btn" onclick="openFee('${f.id}')">Edit</button> <button class="btn red" onclick="deleteFee('${f.id}')">Delete</button></td></tr>`}).join(''):`<tr><td colspan="7" class="empty">No fee collection for ${m}.</td></tr>`;
+}
+
+function openExpense(id){
+ const e=db.expenses.find(x=>x.id===id)||{id:'',date:today(),category:'',description:'',amount:'',note:''};
+ modal.innerHTML=`<h2>${id?'Edit Expense':'Add Expense'}</h2><div class="formgrid">
+ <div class="field"><label>DATE *</label><input id="ee_date" type="date" class="input" value="${e.date}"></div>
+ <div class="field"><label>AMOUNT (₹) *</label><input id="ee_amount" type="number" class="input" value="${e.amount}"></div>
+ <div class="field"><label>CATEGORY *</label><input id="ee_cat" class="input" placeholder="Rent, Salary, Stationery..." value="${esc(e.category)}"></div>
+ <div class="field"><label>DESCRIPTION</label><input id="ee_desc" class="input" value="${esc(e.description)}"></div>
+ <div class="field full"><label>NOTE / BILL NO.</label><input id="ee_note" class="input" value="${esc(e.note)}"></div></div>
+ <div class="modalfoot"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveExpense('${id}')">Save Expense</button></div>`;
+ openModal();
+}
+function saveExpense(id){
+ const get = x => document.getElementById(x);
+ const expenseId = id && String(id).trim() ? String(id) : uid();
+ const obj={
+   id:expenseId,
+   date:get('ee_date').value||today(),
+   category:get('ee_cat').value.trim(),
+   description:get('ee_desc').value.trim(),
+   amount:Number(get('ee_amount').value)||0,
+   note:get('ee_note').value.trim()
+ };
+ if(!obj.category || obj.amount<=0){alert('Category aur amount check karo.');return;}
+ const index=db.expenses.findIndex(e=>String(e.id)===expenseId);
+ if(index===-1) db.expenses.push(obj); else db.expenses[index]=obj;
+ save();closeModal();renderAll();
+}
+function deleteExpense(id){if(confirm('Delete this expense?')){db.expenses=db.expenses.filter(x=>x.id!==id);save();renderExpenses();renderDashboard();}}
+function renderExpenses(){
+ const m=expenseMonth.value||month(),q=(expenseSearch.value||'').toLowerCase();
+ const rows=db.expenses.filter(e=>e.date.slice(0,7)===m).filter(e=>(e.category+' '+e.description).toLowerCase().includes(q)).sort((a,b)=>b.date.localeCompare(a.date));
+ expenseRows.innerHTML=rows.length?rows.map(e=>`<tr><td>${e.date}</td><td><span class="badge">${esc(e.category)}</span></td><td>${esc(e.description)}</td><td class="money negative">${money(e.amount)}</td><td><button class="btn" onclick="openExpense('${e.id}')">Edit</button> <button class="btn red" onclick="deleteExpense('${e.id}')">Delete</button></td></tr>`).join(''):`<tr><td colspan="5" class="empty">No expenses for ${m}.</td></tr>`;
+}
+
+function renderDashboard(){
+ const m=dashMonth.value||month();document.getElementById('sMonth').textContent=m;
+ sStudents.textContent=db.students.length;
+ sReg.textContent=money(db.students.reduce((a,s)=>a+(+s.regAmount||0),0));
+ const fees=db.fees.filter(f=>f.month===m), expenses=db.expenses.filter(e=>e.date.slice(0,7)===m);
+ const ft=fees.reduce((a,f)=>a+(+f.amount||0),0),et=expenses.reduce((a,e)=>a+(+e.amount||0),0);
+ sFee.textContent=money(ft);sFeeSub.textContent=fees.length+' payment entr'+(fees.length===1?'y':'ies');
+ sExpense.textContent=money(et);sBalance.textContent=money(ft-et);
+ let pending=0;db.students.forEach(s=>{let paid=fees.filter(f=>f.studentId===s.id).reduce((a,f)=>a+(+f.amount||0),0);pending+=Math.max(0,(+s.monthlyFee||0)-paid)});
+ sPending.textContent=money(pending);
+ sAllExpense.textContent=money(db.expenses.reduce((a,e)=>a+(+e.amount||0),0));
+ recentFees.innerHTML=fees.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).map(f=>{let s=db.students.find(x=>x.id===f.studentId);return `<div style="padding:9px 0;border-bottom:1px solid #eee"><b>${esc(s?.name||'Deleted student')}</b><span style="float:right" class="positive">${money(f.amount)}</span><small style="display:block;color:#718096">${f.date} • ${esc(f.mode)}</small></div>`}).join('')||'<div class="empty">No collections this month.</div>';
+ recentExpenses.innerHTML=expenses.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).map(e=>`<div style="padding:9px 0;border-bottom:1px solid #eee"><b>${esc(e.category)}</b><span style="float:right" class="negative">${money(e.amount)}</span><small style="display:block;color:#718096">${e.date} • ${esc(e.description)}</small></div>`).join('')||'<div class="empty">No expenses this month.</div>';
+}
+function openModal(){modalBg.classList.add('show')}
+function closeModal(){modalBg.classList.remove('show')}
+modalBg.addEventListener('click',e=>{if(e.target===modalBg)closeModal()});
+
+function exportData(){
+ const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='little-blossoms-backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importData(ev){
+ const file=ev.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.students||!x.fees||!x.expenses)throw Error();db=x;save();renderAll();alert('Backup restored successfully.')}catch(e){alert('Invalid backup file.')}};r.readAsText(file);
+}
+function clearAll(){if(confirm('WARNING: All students, fees and expenses will be permanently removed from this browser. Continue?')){db={students:[],fees:[],expenses:[]};save();renderAll();}}
+function renderBackup(){dataInfo.innerHTML=`<p><b>Students:</b> ${db.students.length}</p><p><b>Fee entries:</b> ${db.fees.length}</p><p><b>Expense entries:</b> ${db.expenses.length}</p><p><b>Storage:</b> This browser / this device</p>`}
+function renderAll(){renderDashboard();renderStudents();renderFees();renderExpenses();renderBackup()}
+renderAll();
+</script>
+</body>
+</html>
