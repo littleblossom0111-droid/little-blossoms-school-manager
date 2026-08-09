@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Little Blossoms — Fee Collection</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#182033;font-family:Arial,Helvetica,sans-serif}
+.header{background:linear-gradient(135deg,#6c5ce7,#8e7cf6);color:#fff;padding:25px 20px}.head{max-width:1150px;margin:auto}
+.brand{font-size:28px;font-weight:800}.sub{font-size:13px;opacity:.85;margin-top:4px}
+.container{max-width:1150px;margin:24px auto;padding:0 18px}
+.back{display:inline-block;text-decoration:none;color:#5a4fc0;font-weight:700;font-size:13px;margin-bottom:15px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:18px}
+h1{margin:0;font-size:24px}.muted{font-size:12px;color:#7a8394;margin-top:5px}
+button{border:0;border-radius:9px;padding:11px 15px;font-weight:700;cursor:pointer}.add{background:#6c5ce7;color:#fff}
+.edit{background:#eeeafd;color:#5548b7}.delete{background:#ffe9e7;color:#bd3328}
+.filter{display:flex;gap:10px;align-items:center;margin-bottom:17px;flex-wrap:wrap}
+input,select{padding:11px 12px;border:1px solid #dfe3ec;border-radius:8px;background:#fff;outline:none}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.card{background:#fff;border:1px solid #e6e9f0;border-radius:14px;padding:17px;box-shadow:0 8px 28px #1d25400b}
+.label{font-size:10px;color:#747d8e;font-weight:800}.num{font-size:24px;font-weight:800;margin-top:8px}.green{color:#07815f}.red{color:#c7352d}.blue{color:#5548bd}.orange{color:#b86b00}
+.panel{background:#fff;border:1px solid #e6e9f0;border-radius:15px;overflow:hidden;box-shadow:0 8px 28px #1d25400b}
+.panelhead{padding:17px 18px;border-bottom:1px solid #edf0f5;display:flex;justify-content:space-between;align-items:center}
+table{width:100%;border-collapse:collapse;min-width:950px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #edf0f5;font-size:12px}th{font-size:10px;color:#778094;text-transform:uppercase;background:#fafbfe}
+.tablewrap{overflow:auto}.empty{text-align:center;padding:40px;color:#8a92a2}
+.status{font-size:10px;font-weight:800;padding:5px 8px;border-radius:15px}.paid{background:#e7f8f1;color:#08785c}.pending{background:#fff0df;color:#a45c00}.partial{background:#eeeafd;color:#574bb5}
+.modalbg{display:none;position:fixed;inset:0;background:#10142688;align-items:center;justify-content:center;padding:18px;z-index:10}.modalbg.show{display:flex}
+.modal{width:560px;max-width:100%;background:#fff;border-radius:17px;padding:22px}.modal h2{margin:0 0 17px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+label{display:block;font-size:10px;color:#697286;font-weight:800;margin-bottom:6px}.full{grid-column:1/-1}
+.preview{background:#f8f7ff;border:1px solid #e8e4ff;border-radius:10px;padding:12px;margin-top:12px;font-size:12px}
+.footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.cancel{background:#edf0f5;color:#465064}
+@media(max-width:800px){.cards{grid-template-columns:1fr 1fr}}@media(max-width:600px){.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.full{grid-column:auto}.top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="header"><div class="head"><div class="brand">🌸 Little Blossoms</div><div class="sub">Fee Collection • Monthly & Date-wise Records</div></div></header>
+
+<main class="container">
+<a class="back" href="index.html">← Back to Dashboard</a>
+
+<div class="top">
+<div><h1>Fee Collection</h1><div class="muted">Monthly fee collection, pending amount and payment history</div></div>
+<button class="add" onclick="openForm()">＋ Collect Fee</button>
+</div>
+
+<div class="filter">
+<label style="margin:0">Fee Month</label>
+<input id="monthFilter" type="month" onchange="render()">
+<input id="search" placeholder="Search student..." oninput="render()" style="min-width:220px">
+</div>
+
+<div class="cards">
+<div class="card"><div class="label">MONTHLY FEE RECEIVED</div><div class="num green" id="totalPaid">₹0</div></div>
+<div class="card"><div class="label">TOTAL PENDING</div><div class="num orange" id="totalPending">₹0</div></div>
+<div class="card"><div class="label">STUDENTS PAID</div><div class="num blue" id="paidStudents">0</div></div>
+<div class="card"><div class="label">COLLECTION ENTRIES</div><div class="num" id="entryCount">0</div></div>
+</div>
+
+<div class="panel">
+<div class="panelhead"><b>Student-wise Monthly Fee Status</b><span class="muted" id="monthLabel"></span></div>
+<div class="tablewrap">
+<table><thead><tr>
+<th>Student</th><th>Monthly Fee</th><th>Paid</th><th>Pending</th><th>Status</th><th>Last Payment Date</th><th>Action</th>
+</tr></thead><tbody id="statusRows"></tbody></table>
+</div>
+</div>
+
+<div class="panel" style="margin-top:18px">
+<div class="panelhead"><b>📅 Date-wise Collection Entries</b><span class="muted">Every payment is saved separately</span></div>
+<div class="tablewrap">
+<table><thead><tr>
+<th>Payment Date</th><th>Fee Month</th><th>Student</th><th>Amount</th><th>Mode</th><th>Note</th><th>Action</th>
+</tr></thead><tbody id="entryRows"></tbody></table>
+</div>
+</div>
+</main>
+
+<div id="modalbg" class="modalbg">
+<div class="modal">
+<h2 id="modalTitle">Collect Fee</h2>
+<div class="grid">
+<div class="full"><label>STUDENT *</label><select id="student"></select></div>
+<div><label>FEE MONTH *</label><input id="feeMonth" type="month"></div>
+<div><label>PAYMENT DATE *</label><input id="paymentDate" type="date"></div>
+<div><label>AMOUNT PAID (₹) *</label><input id="amount" type="number" min="0" step="1" placeholder="5000" oninput="preview()"></div>
+<div><label>PAYMENT MODE</label><select id="mode"><option>Cash</option><option>UPI</option><option>Bank Transfer</option><option>Card</option><option>Other</option></select></div>
+<div class="full"><label>NOTE</label><input id="note" placeholder="e.g. Paid partial / pending amount paid"></div>
+</div>
+<div id="preview" class="preview">Select student and amount.</div>
+<div class="footer"><button class="cancel" onclick="closeForm()">Cancel</button><button class="add" onclick="saveFee()">Save Collection</button></div>
+</div>
+</div>
+
+<script>
+const STUDENT_KEY="little_blossoms_students_v2";
+const FEE_KEY="little_blossoms_fees_v2";
+let students=[],fees=[],editingId=null;
+
+function arr(key){try{let x=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(x)?x:[]}catch(e){return[]}}
+function save(){localStorage.setItem(FEE_KEY,JSON.stringify(fees))}
+function uid(){return Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,10)}
+function today(){return new Date().toISOString().slice(0,10)}
+function currentMonth(){return today().slice(0,7)}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+function load(){
+ students=arr(STUDENT_KEY);
+ fees=arr(FEE_KEY);
+ if(!localStorage.getItem("little_blossoms_fees_v2")){
+  // Compatibility with the earlier dashboard if an older fee key exists.
+  for(const k of ["little_blossoms_fees_v1","little_blossoms_fee_collection_v1"]){
+   const old=arr(k); if(old.length){fees=old;save();break}
+  }
+ }
+ document.getElementById("monthFilter").value=currentMonth();
+ render();
+}
+
+function openForm(id=null,studentId=null){
+ editingId=id;
+ students=arr(STUDENT_KEY);
+ const f=id?fees.find(x=>x.id===id):null;
+ document.getElementById("modalTitle").textContent=f?"Edit Fee Collection":"Collect Fee";
+ document.getElementById("student").innerHTML=students.length?
+  students.map(s=>`<option value="${esc(s.id)}">${esc(s.name)}${s.className?" — "+esc(s.className):""}</option>`).join(""):
+  '<option value="">No students found</option>';
+ document.getElementById("student").value=f?.studentId||studentId||students[0]?.id||"";
+ document.getElementById("feeMonth").value=f?.feeMonth||document.getElementById("monthFilter").value||currentMonth();
+ document.getElementById("paymentDate").value=f?.paymentDate||today();
+ document.getElementById("amount").value=f?.amount??"";
+ document.getElementById("mode").value=f?.mode||"Cash";
+ document.getElementById("note").value=f?.note||"";
+ document.getElementById("modalbg").classList.add("show");
+ preview();
+}
+
+function closeForm(){document.getElementById("modalbg").classList.remove("show");editingId=null}
+
+function studentById(id){return students.find(s=>String(s.id)===String(id))}
+function monthPaid(studentId,month,excludeId=null){
+ return fees.filter(f=>String(f.studentId)===String(studentId)&&f.feeMonth===month&&f.id!==excludeId)
+  .reduce((a,f)=>a+Number(f.amount||0),0);
+}
+function preview(){
+ const s=studentById(document.getElementById("student").value);
+ const m=document.getElementById("feeMonth").value;
+ const amount=Number(document.getElementById("amount").value)||0;
+ if(!s){document.getElementById("preview").textContent="Pehle student registration page par student add karo.";return}
+ const already=monthPaid(s.id,m,editingId);
+ const total=already+amount;
+ const monthly=Number(s.monthlyFee||0);
+ const pending=Math.max(monthly-total,0);
+ document.getElementById("preview").innerHTML=`Monthly Fee: <b>${money(monthly)}</b> &nbsp; | &nbsp; Already Paid: <b>${money(already)}</b> &nbsp; | &nbsp; Is entry: <b>${money(amount)}</b> &nbsp; | &nbsp; Remaining Pending: <b>${money(pending)}</b>`;
+}
+
+function saveFee(){
+ const studentId=document.getElementById("student").value;
+ const s=studentById(studentId);
+ const feeMonth=document.getElementById("feeMonth").value;
+ const amount=Number(document.getElementById("amount").value)||0;
+ if(!s){alert("Pehle registration.html mein student add karo.");return}
+ if(!feeMonth){alert("Fee month select karo.");return}
+ if(amount<=0){alert("Amount 0 se zyada hona chahiye.");return}
+
+ const obj={
+  id:editingId||uid(),
+  studentId:String(studentId),
+  studentName:s.name,
+  feeMonth:feeMonth,
+  paymentDate:document.getElementById("paymentDate").value||today(),
+  amount:amount,
+  mode:document.getElementById("mode").value,
+  note:document.getElementById("note").value.trim()
+ };
+ const i=fees.findIndex(x=>x.id===obj.id);
+ if(i===-1) fees.push(obj); else fees[i]=obj;
+ save();closeForm();
+ document.getElementById("monthFilter").value=feeMonth;
+ render();
+}
+
+function deleteFee(id){
+ const f=fees.find(x=>x.id===id);if(!f)return;
+ if(confirm("Is fee collection entry ko delete karna hai?")){
+  fees=fees.filter(x=>x.id!==id);save();render();
+ }
+}
+
+function render(){
+ students=arr(STUDENT_KEY);fees=arr(FEE_KEY);
+ const month=document.getElementById("monthFilter").value||currentMonth();
+ const q=document.getElementById("search").value.trim().toLowerCase();
+ const monthFees=fees.filter(f=>f.feeMonth===month);
+ let visibleStudents=students.filter(s=>(s.name+" "+(s.parent||"")+" "+(s.phone||"")).toLowerCase().includes(q));
+
+ const paidBy={};
+ monthFees.forEach(f=>paidBy[f.studentId]=(paidBy[f.studentId]||0)+Number(f.amount||0));
+ const totalPaid=monthFees.reduce((a,f)=>a+Number(f.amount||0),0);
+ let totalPending=0,paidCount=0;
+ students.forEach(s=>{
+  const paid=paidBy[s.id]||0;
+  const pending=Math.max(Number(s.monthlyFee||0)-paid,0);
+  totalPending+=pending;
+  if(paid>=Number(s.monthlyFee||0)&&Number(s.monthlyFee||0)>0)paidCount++;
+ });
+ document.getElementById("totalPaid").textContent=money(totalPaid);
+ document.getElementById("totalPending").textContent=money(totalPending);
+ document.getElementById("paidStudents").textContent=paidCount;
+ document.getElementById("entryCount").textContent=monthFees.length;
+ document.getElementById("monthLabel").textContent=month;
+
+ const statusRows=document.getElementById("statusRows");
+ if(!visibleStudents.length)statusRows.innerHTML='<tr><td colspan="7" class="empty">No students found. Add students from Registration.</td></tr>';
+ else statusRows.innerHTML=visibleStudents.map(s=>{
+  const paid=paidBy[s.id]||0, monthly=Number(s.monthlyFee||0),pending=Math.max(monthly-paid,0);
+  const last=monthFees.filter(f=>String(f.studentId)===String(s.id)).sort((a,b)=>b.paymentDate.localeCompare(a.paymentDate))[0];
+  let cls="pending",label="Pending";
+  if(monthly>0&&pending===0){cls="paid";label="Paid";}
+  else if(paid>0){cls="partial";label="Partial";}
+  return `<tr><td><b>${esc(s.name)}</b><br><span class="muted">${esc(s.className||"")}</span></td>
+  <td>${money(monthly)}</td><td class="green"><b>${money(paid)}</b></td><td class="${pending?'orange':'green'}"><b>${money(pending)}</b></td>
+  <td><span class="status ${cls}">${label}</span></td><td>${last?esc(last.paymentDate):"—"}</td>
+  <td><button class="add" onclick="openForm(null,'${esc(s.id)}')">＋ Pay</button></td></tr>`;
+ }).join("");
+
+ const searchEntries=monthFees.filter(f=>{const s=studentById(f.studentId);return !q||((s?.name||f.studentName||"").toLowerCase().includes(q))})
+ .sort((a,b)=>b.paymentDate.localeCompare(a.paymentDate));
+ const entryRows=document.getElementById("entryRows");
+ entryRows.innerHTML=searchEntries.length?searchEntries.map(f=>`<tr>
+ <td>${esc(f.paymentDate)}</td><td>${esc(f.feeMonth)}</td><td><b>${esc(studentById(f.studentId)?.name||f.studentName||"Unknown")}</b></td>
+ <td class="green"><b>${money(f.amount)}</b></td><td>${esc(f.mode)}</td><td>${esc(f.note||"")}</td>
+ <td><button class="edit" onclick="openForm('${f.id}')">Edit</button> <button class="delete" onclick="deleteFee('${f.id}')">Delete</button></td></tr>`).join("")
+ :'<tr><td colspan="7" class="empty">Is month mein koi fee collection entry nahi hai.</td></tr>';
+}
+
+document.getElementById("student").addEventListener("change",preview);
+document.getElementById("feeMonth").addEventListener("change",preview);
+document.getElementById("modalbg").addEventListener("click",e=>{if(e.target.id==="modalbg")closeForm()});
+load();
+</script>
+</body>
+</html>
