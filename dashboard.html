@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Little Blossoms — School Management</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#182033;font-family:Arial,Helvetica,sans-serif}
+.header{background:linear-gradient(135deg,#6c5ce7,#8e7cf6);color:#fff;padding:28px 20px}.header-inner{max-width:1150px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{font-size:29px;font-weight:800}.sub{font-size:13px;opacity:.85;margin-top:5px}
+.logout-btn{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.45);padding:10px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:.2s}.logout-btn:hover{background:rgba(255,255,255,.3);transform:translateY(-1px)}
+.container{max-width:1150px;margin:25px auto;padding:0 18px}.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px}
+.nav a{background:#fff;border:1px solid #e6e9f0;border-radius:14px;padding:18px;text-decoration:none;color:#20263a;box-shadow:0 7px 25px #2028400b;transition:.2s}.nav a:hover{transform:translateY(-2px);border-color:#c9c2ff}.icon{font-size:25px}.nav b{display:block;margin-top:9px}.nav span{display:block;font-size:11px;color:#7b8394;margin-top:4px}
+.panel{background:#fff;border:1px solid #e6e9f0;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 8px 28px #1d25400b}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+h2{font-size:18px;margin:0}.filter{display:flex;gap:10px;align-items:center}.input{padding:10px 12px;border:1px solid #dfe3ec;border-radius:8px;background:#fff}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.card{padding:17px;border-radius:13px;background:#fafbfe;border:1px solid #edf0f5}.label{font-size:11px;color:#737c8e;font-weight:700}.num{font-size:25px;font-weight:800;margin-top:8px}.green{color:#07815f}.red{color:#c7352d}.blue{color:#5548bd}.muted{color:#7a8393;font-size:12px}
+.balance{background:linear-gradient(135deg,#292344,#45377a);color:#fff}.balance .label,.balance .muted{color:#ddd8f5}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #edf0f5;font-size:13px}th{font-size:10px;color:#778094;text-transform:uppercase}.empty{text-align:center;color:#8991a1;padding:30px}
+.notice{font-size:12px;color:#6f7788;background:#fff8e6;border:1px solid #f2e0a7;padding:11px;border-radius:9px;margin-bottom:16px}.opening{background:#f4f1ff;border:1px solid #ddd7ff;color:#41358e}.opening .num{color:#5548bd}
+.formrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.smallinput{padding:9px 11px;border:1px solid #dfe3ec;border-radius:8px;background:#fff}.save{background:#6c5ce7;color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}
+@media(max-width:900px){.nav{grid-template-columns:repeat(3,1fr)}.cards{grid-template-columns:1fr 1fr}}@media(max-width:600px){.header-inner{align-items:flex-start}.brand{font-size:24px}.logout-btn{padding:9px 12px}.nav{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr 1fr}.panelhead{align-items:flex-start;flex-direction:column}.filter{width:100%}.filter .input{width:100%}}
+</style>
+</head>
+<body>
+<header class="header"><div class="header-inner"><div><div class="brand">🌸 Little Blossoms</div><div class="sub">Play School • Management Dashboard</div></div><button class="logout-btn" onclick="logout()">🚪 Logout</button></div></header>
+<main class="container">
+<nav class="nav">
+<a href="registration.html"><div class="icon">👧</div><b>Registration</b><span>Add / Edit / Delete Students</span></a>
+<a href="fee-collection.html"><div class="icon">💳</div><b>Fee Collection</b><span>Monthly fees & date-wise records</span></a>
+<a href="expenses.html"><div class="icon">🧾</div><b>Expenses</b><span>Date-wise school expenses</span></a>
+<a href="investment.html"><div class="icon">📈</div><b>Investment</b><span>Investment & returns records</span></a>
+<a href="dance-classes.html"><div class="icon">💃</div><b>Dance Classes</b><span>Separate dance student records</span></a>
+<a href="#summary"><div class="icon">📊</div><b>Summary</b><span>Month-wise complete overview</span></a>
+</nav>
+<div class="notice">Select a month below. Previous closing balance is automatically carried forward. If you already had money saved before starting this system, enter it once as the opening balance below.</div>
+<section class="panel" id="openingPanel"><div class="panelhead"><h2>💰 Previous Saved Balance</h2></div><div class="formrow"><label class="muted">Opening balance before this system:</label><input id="openingBalance" class="smallinput" type="number" min="0" step="0.01" placeholder="0"><button id="saveOpening" class="save">Save Balance</button></div><div class="muted" style="margin-top:9px">Enter the amount you already had before the first month you are tracking. Enter it only once.</div></section>
+<section class="panel" id="summary"><div class="panelhead"><h2>📊 Monthly Summary</h2><div class="filter"><label class="muted">Month</label><input id="month" class="input" type="month"></div></div>
+<div class="cards"><div class="card opening"><div class="label">OPENING BALANCE</div><div class="num" id="opening">₹0</div><div class="muted">Previous closing / saved balance</div></div><div class="card"><div class="label">TOTAL STUDENTS</div><div class="num blue" id="students">0</div><div class="muted">Registered students</div></div><div class="card"><div class="label">FEES RECEIVED</div><div class="num green" id="fees">₹0</div><div class="muted">Selected month</div></div><div class="card"><div class="label">EXPENSES</div><div class="num red" id="expenses">₹0</div><div class="muted">Selected month</div></div></div>
+<div class="cards" style="margin-top:13px"><div class="card balance"><div class="label">CLOSING BALANCE</div><div class="num" id="balance">₹0</div><div class="muted">Opening + Money In − Expenses</div></div><div class="card"><div class="label">REGISTRATION FEES</div><div class="num" id="registration">₹0</div><div class="muted">Registration amount recorded</div></div><div class="card"><div class="label">INVESTMENT</div><div class="num" id="investment">₹0</div><div class="muted">Selected month</div></div><div class="card"><div class="label">TOTAL MONEY IN</div><div class="num green" id="moneyIn">₹0</div><div class="muted">Fees + Registration</div></div></div></section>
+<section class="panel"><div class="panelhead"><h2>📅 Month-wise Details</h2></div><div class="cards"><div class="card"><div class="label">NET AFTER EXPENSE</div><div class="num blue" id="net">₹0</div><div class="muted">Opening + Money In − Expenses</div></div><div class="card"><div class="label">CARRY FORWARD</div><div class="num blue" id="carry">₹0</div><div class="muted">Amount available for next month</div></div></div></section>
+<section class="panel"><div class="panelhead"><h2>🕒 Date-wise Activity</h2></div><div style="overflow:auto"><table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Amount</th></tr></thead><tbody id="activity"></tbody></table></div></section>
+</main>
+<script>
+if(sessionStorage.getItem("little_blossoms_logged_in")!=="1"){window.location.replace("index.html")}
+function logout(){sessionStorage.removeItem("little_blossoms_logged_in");window.location.replace("index.html")}
+
+const STUDENT_KEY="little_blossoms_students_v2";
+const FEE_KEYS=["little_blossoms_fees_v1","little_blossoms_fees_v2","little_blossoms_fee_collection_v1"];
+const EXP_KEYS=["little_blossoms_expenses_v1","little_blossoms_expenses_v2","little_blossoms_expenses_v3"];
+const INV_KEYS=["little_blossoms_investments_v1","little_blossoms_investment_v1"];
+const OPENING_KEY="little_blossoms_opening_balance_v1";
+function readArray(key){try{const x=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(x)?x:[]}catch(e){return[]}}
+function readFirst(keys){for(const k of keys){const x=readArray(k);if(x.length)return x}return[]}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function getMonth(){return document.getElementById("month").value}
+function dateOf(x){return x.date||x.paymentDate||x.registrationDate||x.regDate||""}
+function amountOf(x){return Number(x.amount??x.fee??x.registrationFee??x.regAmount??x.value??0)||0}
+function monthTotals(m){
+const fees=readFirst(FEE_KEYS).filter(x=>(x.month||dateOf(x).slice(0,7))===m);
+const expenses=readFirst(EXP_KEYS).filter(x=>dateOf(x).slice(0,7)===m);
+const students=readArray(STUDENT_KEY);
+const investments=readFirst(INV_KEYS).filter(x=>dateOf(x).slice(0,7)===m);
+const feeTotal=fees.reduce((a,x)=>a+amountOf(x),0),expTotal=expenses.reduce((a,x)=>a+amountOf(x),0),invTotal=investments.reduce((a,x)=>a+amountOf(x),0);
+const regTotal=students.filter(x=>(x.registrationDate||x.regDate||"").slice(0,7)===m).reduce((a,x)=>a+Number(x.registrationFee??x.regAmount??0),0);
+return{fees,expenses,investments,feeTotal,expTotal,invTotal,regTotal}
+}
+function openingFor(m){
+const base=Number(localStorage.getItem(OPENING_KEY)||0)||0;
+const cur=new Date(m+"-01T00:00:00"),p=new Date("2000-01-01T00:00:00");let total=base;
+while(p<cur){const t=monthTotals(p.toISOString().slice(0,7));total+=t.feeTotal+t.regTotal-t.expTotal;p.setMonth(p.getMonth()+1)}
+return total
+}
+function render(){
+const m=getMonth(),students=readArray(STUDENT_KEY),t=monthTotals(m),opening=openingFor(m),closing=opening+t.feeTotal+t.regTotal-t.expTotal;
+document.getElementById("opening").textContent=money(opening);document.getElementById("students").textContent=students.length;document.getElementById("fees").textContent=money(t.feeTotal);document.getElementById("expenses").textContent=money(t.expTotal);document.getElementById("balance").textContent=money(closing);document.getElementById("registration").textContent=money(t.regTotal);document.getElementById("investment").textContent=money(t.invTotal);document.getElementById("moneyIn").textContent=money(t.feeTotal+t.regTotal);document.getElementById("net").textContent=money(closing);document.getElementById("carry").textContent=money(closing);
+let activity=[];
+t.fees.forEach(x=>activity.push({date:dateOf(x),type:"Fee",desc:x.studentName||x.name||"Fee Collection",amount:amountOf(x)}));
+t.expenses.forEach(x=>activity.push({date:dateOf(x),type:"Expense",desc:x.category||x.description||"Expense",amount:-amountOf(x)}));
+t.investments.forEach(x=>activity.push({date:dateOf(x),type:"Investment",desc:x.description||x.name||"Investment",amount:-amountOf(x)}));
+students.filter(x=>(x.registrationDate||x.regDate||"").slice(0,7)===m).forEach(x=>activity.push({date:x.registrationDate||x.regDate,type:"Registration",desc:x.name+" Registration",amount:Number(x.registrationFee??x.regAmount??0)}));
+activity.sort((a,b)=>b.date.localeCompare(a.date));
+document.getElementById("activity").innerHTML=activity.length?activity.map(x=>`<tr><td>${x.date}</td><td>${x.type}</td><td>${x.desc}</td><td class="${x.amount>=0?'green':'red'}"><b>${money(x.amount)}</b></td></tr>`).join(""):'<tr><td colspan="4" class="empty">No records for this month yet.</td></tr>'
+}
+document.getElementById("saveOpening").addEventListener("click",()=>{const v=Number(document.getElementById("openingBalance").value||0);if(v<0){alert("Balance cannot be negative.");return}localStorage.setItem(OPENING_KEY,String(v));render();alert("Previous saved balance saved successfully.")});
+const d=new Date();document.getElementById("month").value=d.toISOString().slice(0,7);document.getElementById("openingBalance").value=localStorage.getItem(OPENING_KEY)||"";document.getElementById("month").addEventListener("change",render);render();
+</script>
+</body>
+</html>
