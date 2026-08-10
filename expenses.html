@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Little Blossoms — Expenses</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#182033;font-family:Arial,Helvetica,sans-serif}
+.header{background:linear-gradient(135deg,#6c5ce7,#8e7cf6);color:#fff;padding:28px 20px}.header-inner{max-width:1150px;margin:auto}
+.brand{font-size:29px;font-weight:800}.sub{font-size:13px;opacity:.85;margin-top:5px}
+.container{max-width:1150px;margin:25px auto;padding:0 18px}
+.back{display:inline-block;margin-bottom:16px;text-decoration:none;color:#5548bd;font-size:13px;font-weight:700}
+.panel{background:#fff;border:1px solid #e6e9f0;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 8px 28px #1d25400b}
+.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}h2{font-size:18px;margin:0}
+.form{display:grid;grid-template-columns:1fr 1.4fr 1fr 1fr;gap:13px}.field label{display:block;font-size:11px;color:#737c8e;font-weight:700;margin-bottom:6px}
+.input,select{width:100%;padding:11px 12px;border:1px solid #dfe3ec;border-radius:9px;background:#fff;font-size:13px;outline:none}
+.input:focus,select:focus{border-color:#8e7cf6}.full{grid-column:1/-1}
+.actions{display:flex;gap:9px}.actions button{border:0;border-radius:9px;padding:11px 17px;font-size:13px;font-weight:700;cursor:pointer}
+.save{background:#6c5ce7;color:#fff}.cancel{background:#eef0f5;color:#4e5668;display:none}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.card{padding:17px;border-radius:13px;background:#fafbfe;border:1px solid #edf0f5}
+.label{font-size:11px;color:#737c8e;font-weight:700}.num{font-size:25px;font-weight:800;margin-top:8px}
+.red{color:#c7352d}.blue{color:#5548bd}.green{color:#07815f}.muted{color:#7a8393;font-size:12px}
+.filter{display:flex;gap:10px;align-items:center}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 9px;border-bottom:1px solid #edf0f5;font-size:13px}
+th{font-size:10px;color:#778094;text-transform:uppercase}.empty{text-align:center;color:#8991a1;padding:35px}
+.badge{display:inline-block;padding:5px 9px;border-radius:20px;background:#f0edff;color:#5548bd;font-size:11px;font-weight:700}
+.edit,.delete{border:0;border-radius:7px;padding:7px 10px;font-size:11px;font-weight:700;cursor:pointer}.edit{background:#eeeaff;color:#5548bd}.delete{background:#ffeceb;color:#c7352d}
+.notice{font-size:12px;color:#6f7788;background:#fff8e6;border:1px solid #f2e0a7;padding:11px;border-radius:9px;margin-bottom:16px}
+@media(max-width:850px){.form{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.form{grid-template-columns:1fr}.full{grid-column:auto}.cards{grid-template-columns:1fr}.panelhead{align-items:flex-start;flex-direction:column}.filter{width:100%}table{min-width:700px}}
+</style>
+</head>
+<body>
+<header class="header"><div class="header-inner"><div class="brand">🌸 Little Blossoms</div><div class="sub">Play School • Expense Management</div></div></header>
+<main class="container">
+<a href="index.html" class="back">← Back to Dashboard</a>
+<div class="notice">Add school expenses here. You can edit or delete any entry later. Expenses are saved in the same browser storage used by the dashboard.</div>
+
+<section class="panel">
+<div class="panelhead"><h2 id="formTitle">🧾 Add Expense</h2></div>
+<form id="expenseForm"><div class="form">
+<div class="field"><label>DATE</label><input id="date" class="input" type="date" required></div>
+<div class="field"><label>EXPENSE / PARTICULAR</label><input id="description" class="input" type="text" placeholder="e.g. Electricity Bill" required></div>
+<div class="field"><label>CATEGORY</label><select id="category" required>
+<option value="">Select Category</option><option>Rent</option><option>Electricity</option><option>Water</option><option>Salary</option><option>Stationery</option><option>Food</option><option>Maintenance</option><option>Transport</option><option>Cleaning</option><option>School Material</option><option>Advertisement</option><option>Other</option>
+</select></div>
+<div class="field"><label>AMOUNT (₹)</label><input id="amount" class="input" type="number" min="0" step="0.01" placeholder="0" required></div>
+<div class="field full"><label>NOTE / REMARK (OPTIONAL)</label><input id="note" class="input" type="text" placeholder="Optional remark"></div>
+<div class="actions full"><button type="submit" class="save" id="saveBtn">Add Expense</button><button type="button" class="cancel" id="cancelBtn">Cancel Edit</button></div>
+</div></form>
+</section>
+
+<section class="panel">
+<div class="panelhead"><h2>📊 Expense Summary</h2><div class="filter"><label class="label">MONTH</label><input id="monthFilter" class="input" type="month"></div></div>
+<div class="cards">
+<div class="card"><div class="label">TOTAL EXPENSE</div><div class="num red" id="totalExpense">₹0</div><div class="muted">Selected month</div></div>
+<div class="card"><div class="label">TOTAL ENTRIES</div><div class="num blue" id="totalEntries">0</div><div class="muted">Expense records</div></div>
+<div class="card"><div class="label">AVERAGE EXPENSE</div><div class="num green" id="averageExpense">₹0</div><div class="muted">Per entry</div></div>
+</div></section>
+
+<section class="panel">
+<div class="panelhead"><h2>📅 Date-wise Expenses</h2></div>
+<div style="overflow:auto"><table><thead><tr><th>Date</th><th>Expense</th><th>Category</th><th>Note</th><th>Amount</th><th>Action</th></tr></thead><tbody id="expenseTable"></tbody></table></div>
+</section>
+</main>
+
+<script>
+const EXPENSE_KEY="little_blossoms_expenses_v3";
+let expenses=[],editingId=null;
+
+function loadExpenses(){try{const data=JSON.parse(localStorage.getItem(EXPENSE_KEY)||"[]");expenses=Array.isArray(data)?data:[]}catch(e){expenses=[]}}
+function saveExpenses(){localStorage.setItem(EXPENSE_KEY,JSON.stringify(expenses))}
+function money(v){return "₹"+Number(v||0).toLocaleString("en-IN")}
+function today(){const d=new Date(),y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return `${y}-${m}-${day}`}
+function currentMonth(){return today().slice(0,7)}
+function escapeHtml(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+
+function render(){
+ const month=document.getElementById("monthFilter").value;
+ let filtered=expenses.filter(x=>String(x.date||"").slice(0,7)===month);
+ filtered.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+ const total=filtered.reduce((s,x)=>s+Number(x.amount||0),0);
+ document.getElementById("totalExpense").textContent=money(total);
+ document.getElementById("totalEntries").textContent=filtered.length;
+ document.getElementById("averageExpense").textContent=money(filtered.length?total/filtered.length:0);
+ const tbody=document.getElementById("expenseTable");
+ if(!filtered.length){tbody.innerHTML='<tr><td colspan="6" class="empty">No expenses recorded for this month yet.</td></tr>';return}
+ tbody.innerHTML=filtered.map(x=>`<tr>
+<td>${escapeHtml(x.date)}</td><td><b>${escapeHtml(x.description||"Expense")}</b></td>
+<td><span class="badge">${escapeHtml(x.category||"Other")}</span></td>
+<td>${escapeHtml(x.note||"-")}</td><td class="red"><b>${money(x.amount)}</b></td>
+<td><button class="edit" onclick="editExpense('${x.id}')">Edit</button> <button class="delete" onclick="deleteExpense('${x.id}')">Delete</button></td>
+</tr>`).join("");
+}
+
+document.getElementById("expenseForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ const date=document.getElementById("date").value;
+ const description=document.getElementById("description").value.trim();
+ const category=document.getElementById("category").value;
+ const amount=Number(document.getElementById("amount").value);
+ const note=document.getElementById("note").value.trim();
+ if(!date||!description||!category||!amount||amount<=0){alert("Please fill all required details.");return}
+ if(editingId){
+  const i=expenses.findIndex(x=>x.id===editingId);
+  if(i!==-1)expenses[i]={...expenses[i],date,description,category,amount,note};
+  editingId=null;
+  document.getElementById("formTitle").textContent="🧾 Add Expense";
+  document.getElementById("saveBtn").textContent="Add Expense";
+  document.getElementById("cancelBtn").style.display="none";
+ }else{
+  expenses.push({id:Date.now().toString()+Math.random().toString(36).slice(2),date,description,category,amount,note,createdAt:new Date().toISOString()});
+ }
+ saveExpenses();this.reset();document.getElementById("date").value=today();render();
+});
+
+function editExpense(id){
+ const item=expenses.find(x=>x.id===id);if(!item)return;
+ editingId=id;
+ document.getElementById("date").value=item.date||"";
+ document.getElementById("description").value=item.description||"";
+ document.getElementById("category").value=item.category||"";
+ document.getElementById("amount").value=item.amount||"";
+ document.getElementById("note").value=item.note||"";
+ document.getElementById("formTitle").textContent="✏️ Edit Expense";
+ document.getElementById("saveBtn").textContent="Update Expense";
+ document.getElementById("cancelBtn").style.display="block";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function deleteExpense(id){
+ const item=expenses.find(x=>x.id===id);if(!item)return;
+ if(!confirm(`Delete this expense?\n\n${item.description} - ${money(item.amount)}`))return;
+ expenses=expenses.filter(x=>x.id!==id);saveExpenses();render();
+}
+
+document.getElementById("cancelBtn").addEventListener("click",function(){
+ editingId=null;document.getElementById("expenseForm").reset();document.getElementById("date").value=today();
+ document.getElementById("formTitle").textContent="🧾 Add Expense";
+ document.getElementById("saveBtn").textContent="Add Expense";this.style.display="none";
+});
+document.getElementById("monthFilter").addEventListener("change",render);
+document.getElementById("date").value=today();
+document.getElementById("monthFilter").value=currentMonth();
+loadExpenses();render();
+</script>
+</body>
+</html>
