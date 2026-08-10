@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Little Blossoms — Dance Classes</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#182033;font-family:Arial,sans-serif}
+.header{background:linear-gradient(135deg,#e84393,#fd79a8);color:#fff;padding:28px 20px}.header-inner,.container{max-width:1150px;margin:auto}
+.brand{font-size:29px;font-weight:800}.sub{font-size:13px;opacity:.88;margin-top:5px}.container{margin:25px auto;padding:0 18px}
+.back{display:inline-block;margin-bottom:16px;text-decoration:none;color:#d63384;font-size:13px;font-weight:700}
+.panel{background:#fff;border:1px solid #e6e9f0;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 8px 28px #1d25400b}
+.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}h2{font-size:18px;margin:0}
+.form{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.field label{display:block;font-size:11px;color:#737c8e;font-weight:700;margin-bottom:6px}
+.input,select{width:100%;padding:11px 12px;border:1px solid #dfe3ec;border-radius:9px;background:#fff;font-size:13px}.full{grid-column:1/-1}
+.actions{display:flex;gap:9px}.actions button,.edit,.delete{border:0;border-radius:8px;padding:9px 13px;font-weight:700;cursor:pointer}
+.save{background:#e84393;color:#fff}.cancel{background:#eee}.edit{background:#eeeaff;color:#5548bd}.delete{background:#ffeceb;color:#c7352d}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.card{padding:17px;border-radius:13px;background:#fffafa;border:1px solid #f5e8ef}
+.label{font-size:11px;color:#737c8e;font-weight:700}.num{font-size:25px;font-weight:800;margin-top:8px}.pink{color:#d63384}.blue{color:#5548bd}.green{color:#07815f}.red{color:#c7352d}.muted{color:#7a8393;font-size:12px}
+.filter{display:flex;gap:10px;align-items:center}.notice{font-size:12px;color:#6f7788;background:#fff4f8;border:1px solid #f4cfe0;padding:11px;border-radius:9px;margin-bottom:16px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 9px;border-bottom:1px solid #edf0f5;font-size:13px}th{font-size:10px;color:#778094;text-transform:uppercase}
+.empty{text-align:center;color:#8991a1;padding:35px}.badge{padding:5px 9px;border-radius:20px;background:#ffe9f2;color:#d63384;font-size:11px;font-weight:700}
+.tabs{display:flex;gap:9px;margin-bottom:18px}.tab{border:1px solid #ddd;padding:10px 15px;border-radius:9px;background:#fff;cursor:pointer;font-weight:700;color:#555}.tab.active{background:#e84393;color:#fff;border-color:#e84393}
+.hidden{display:none}
+@media(max-width:900px){.form{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.form{grid-template-columns:1fr}.full{grid-column:auto}.cards{grid-template-columns:1fr 1fr}.panelhead{align-items:flex-start;flex-direction:column}table{min-width:900px}}
+</style>
+</head>
+<body>
+<header class="header"><div class="header-inner"><div class="brand">🌸 Little Blossoms</div><div class="sub">Dance Classes • Separate Student & Fee Management</div></div></header>
+<main class="container">
+<a href="index.html" class="back">← Back to Dashboard</a>
+<div class="notice"><b>Teacher: Duja Sonker</b> • Dance students and their fees are completely separate from Play School records. A student's registration is saved once; every fee payment is saved as a separate monthly record, so changing the current fee never changes old months.</div>
+
+<div class="tabs">
+<button class="tab active" id="studentTab">👧 Students</button>
+<button class="tab" id="feeTab">💳 Fee Collection</button>
+</div>
+
+<section id="studentsSection">
+<section class="panel">
+<div class="panelhead"><h2 id="studentFormTitle">➕ Register Dance Student</h2></div>
+<form id="studentForm"><div class="form">
+<div class="field"><label>STUDENT NAME</label><input id="studentName" class="input" required placeholder="Student name"></div>
+<div class="field"><label>TEACHER NAME</label><input id="studentTeacher" class="input" value="Duja Sonker" required></div>
+<div class="field"><label>JOINING DATE</label><input id="joiningDate" class="input" type="date" required></div>
+<div class="field"><label>CURRENT MONTHLY FEE (₹)</label><input id="currentFee" class="input" type="number" min="0" step="0.01" value="1500"></div>
+<div class="field"><label>STATUS</label><select id="studentStatus"><option>Active</option><option>Inactive</option></select></div>
+<div class="field full"><label>NOTE</label><input id="studentNote" class="input" placeholder="Optional"></div>
+<div class="actions full"><button class="save" id="studentSave">Register Student</button><button type="button" class="cancel" id="studentCancel" style="display:none">Cancel Edit</button></div>
+</div></form>
+</section>
+<section class="panel"><div class="panelhead"><h2>👧 Registered Dance Students</h2></div>
+<div style="overflow:auto"><table><thead><tr><th>Name</th><th>Teacher</th><th>Joining Date</th><th>Current Fee</th><th>Status</th><th>Note</th><th>Action</th></tr></thead><tbody id="studentTable"></tbody></table></div></section>
+</section>
+
+<section id="feesSection" class="hidden">
+<section class="panel">
+<div class="panelhead"><h2 id="feeFormTitle">💳 Collect Dance Fee</h2></div>
+<form id="feeForm"><div class="form">
+<div class="field"><label>STUDENT</label><select id="feeStudent" required><option value="">Select student</option></select></div>
+<div class="field"><label>MONTH</label><input id="feeMonth" class="input" type="month" required></div>
+<div class="field"><label>PAYMENT DATE</label><input id="paymentDate" class="input" type="date" required></div>
+<div class="field"><label>AMOUNT RECEIVED (₹)</label><input id="feeAmount" class="input" type="number" min="0" step="0.01" required></div>
+<div class="field"><label>EXPECTED FEE (₹)</label><input id="expectedFee" class="input" type="number" min="0" step="0.01" placeholder="Optional"></div>
+<div class="field"><label>STATUS</label><select id="feeStatus"><option>Paid</option><option>Partial</option><option>Pending</option></select></div>
+<div class="field full"><label>NOTE</label><input id="feeNote" class="input" placeholder="Optional"></div>
+<div class="actions full"><button class="save" id="feeSave">Save Fee</button><button type="button" class="cancel" id="feeCancel" style="display:none">Cancel Edit</button></div>
+</div></form>
+</section>
+
+<section class="panel"><div class="panelhead"><h2>📊 Monthly Dance Fee Summary</h2><div class="filter"><label class="muted">MONTH</label><input id="filterMonth" class="input" type="month"></div></div>
+<div class="cards">
+<div class="card"><div class="label">ACTIVE STUDENTS</div><div class="num pink" id="activeStudents">0</div></div>
+<div class="card"><div class="label">PAID RECORDS</div><div class="num green" id="paidRecords">0</div></div>
+<div class="card"><div class="label">PENDING / PARTIAL</div><div class="num red" id="pendingRecords">0</div></div>
+<div class="card"><div class="label">COLLECTION</div><div class="num blue" id="collection">₹0</div></div>
+</div></section>
+
+<section class="panel"><div class="panelhead"><h2>📅 Date-wise Fee History</h2></div>
+<div style="overflow:auto"><table><thead><tr><th>Payment Date</th><th>Student</th><th>Month</th><th>Expected</th><th>Received</th><th>Status</th><th>Note</th><th>Action</th></tr></thead><tbody id="feeTable"></tbody></table></div></section>
+</section>
+</main>
+
+<script>
+const STUDENT_KEY="little_blossoms_dance_students_v2";
+const FEE_KEY="little_blossoms_dance_fees_v2";
+let students=[],fees=[],studentEditId=null,feeEditId=null;
+const $=id=>document.getElementById(id);
+function today(){let d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function currentMonth(){return today().slice(0,7)}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function load(){try{let s=JSON.parse(localStorage.getItem(STUDENT_KEY)||"[]");students=Array.isArray(s)?s:[]}catch(e){students=[]}try{let f=JSON.parse(localStorage.getItem(FEE_KEY)||"[]");fees=Array.isArray(f)?f:[]}catch(e){fees=[]}}
+function save(){localStorage.setItem(STUDENT_KEY,JSON.stringify(students));localStorage.setItem(FEE_KEY,JSON.stringify(fees))}
+function switchTab(tab){let st=tab==="students";$("studentsSection").classList.toggle("hidden",!st);$("feesSection").classList.toggle("hidden",st);$("studentTab").classList.toggle("active",st);$("feeTab").classList.toggle("active",!st);if(!st)refreshStudentDropdown();renderFees()}
+$("studentTab").onclick=()=>switchTab("students");$("feeTab").onclick=()=>switchTab("fees");
+
+function renderStudents(){
+ $("studentTable").innerHTML=students.length?students.map(s=>`<tr><td><b>${esc(s.name)}</b></td><td>${esc(s.teacher)}</td><td>${esc(s.joiningDate)}</td><td>${money(s.currentFee)}</td><td>${esc(s.status)}</td><td>${esc(s.note||"-")}</td><td><button class="edit" onclick="editStudent('${s.id}')">Edit</button> <button class="delete" onclick="deleteStudent('${s.id}')">Delete</button></td></tr>`).join(""):'<tr><td colspan="7" class="empty">No dance students registered yet.</td></tr>';
+ refreshStudentDropdown();
+}
+$("studentForm").onsubmit=e=>{e.preventDefault();let x={name:$("studentName").value.trim(),teacher:$("studentTeacher").value.trim()||"Duja Sonker",joiningDate:$("joiningDate").value,currentFee:Number($("currentFee").value||0),status:$("studentStatus").value,note:$("studentNote").value.trim()};if(!x.name||!x.joiningDate)return alert("Enter student name and joining date.");
+if(studentEditId){let i=students.findIndex(s=>s.id===studentEditId);students[i]={...students[i],...x};studentEditId=null;$("studentSave").textContent="Register Student";$("studentCancel").style.display="none";$("studentFormTitle").textContent="➕ Register Dance Student"}else students.push({id:Date.now()+Math.random(),...x});
+save();resetStudent();renderStudents();renderFees()};
+function resetStudent(){$("studentForm").reset();$("studentTeacher").value="Duja Sonker";$("currentFee").value=1500;$("joiningDate").value=today()}
+window.editStudent=id=>{let s=students.find(x=>x.id==id);if(!s)return;studentEditId=id;$("studentName").value=s.name;$("studentTeacher").value=s.teacher;$("joiningDate").value=s.joiningDate;$("currentFee").value=s.currentFee;$("studentStatus").value=s.status;$("studentNote").value=s.note||"";$("studentSave").textContent="Update Student";$("studentCancel").style.display="block";$("studentFormTitle").textContent="✏️ Edit Dance Student";scrollTo({top:0,behavior:"smooth"})};
+window.deleteStudent=id=>{let s=students.find(x=>x.id==id);if(!s)return;if(!confirm("Delete "+s.name+"? Existing fee history will also be deleted. Continue?"))return;students=students.filter(x=>x.id!=id);fees=fees.filter(x=>x.studentId!=id);save();renderStudents();renderFees()};
+$("studentCancel").onclick=()=>{studentEditId=null;resetStudent();$("studentSave").textContent="Register Student";$("studentCancel").style.display="none";$("studentFormTitle").textContent="➕ Register Dance Student"};
+
+function refreshStudentDropdown(){let old=$("feeStudent").value;$("feeStudent").innerHTML='<option value="">Select student</option>'+students.map(s=>`<option value="${s.id}">${esc(s.name)} — ${money(s.currentFee)}/month</option>`).join("");if(students.some(s=>String(s.id)===String(old)))$("feeStudent").value=old}
+$("feeStudent").onchange=()=>{let s=students.find(x=>String(x.id)===String($("feeStudent").value));if(s){$("expectedFee").value=s.currentFee;$("feeAmount").value=s.currentFee}};
+$("feeForm").onsubmit=e=>{e.preventDefault();let sid=$("feeStudent").value,s=students.find(x=>String(x.id)===String(sid));if(!s)return alert("Select a student.");
+let x={studentId:sid,studentName:s.name,month:$("feeMonth").value,paymentDate:$("paymentDate").value,expectedFee:Number($("expectedFee").value||0),amount:Number($("feeAmount").value||0),status:$("feeStatus").value,note:$("feeNote").value.trim()};
+if(!x.month||!x.paymentDate)return alert("Select month and payment date.");
+if(feeEditId){let i=fees.findIndex(f=>f.id===feeEditId);fees[i]={...fees[i],...x};feeEditId=null;$("feeSave").textContent="Save Fee";$("feeCancel").style.display="none";$("feeFormTitle").textContent="💳 Collect Dance Fee"}else fees.push({id:Date.now()+Math.random(),...x});
+save();resetFee();renderFees()};
+function resetFee(){$("feeForm").reset();$("feeMonth").value=currentMonth();$("paymentDate").value=today();refreshStudentDropdown()}
+window.editFee=id=>{let f=fees.find(x=>x.id==id);if(!f)return;feeEditId=id;refreshStudentDropdown();$("feeStudent").value=f.studentId;$("feeMonth").value=f.month;$("paymentDate").value=f.paymentDate;$("expectedFee").value=f.expectedFee;$("feeAmount").value=f.amount;$("feeStatus").value=f.status;$("feeNote").value=f.note||"";$("feeSave").textContent="Update Fee";$("feeCancel").style.display="block";$("feeFormTitle").textContent="✏️ Edit Fee Collection";scrollTo({top:0,behavior:"smooth"})};
+window.deleteFee=id=>{let f=fees.find(x=>x.id==id);if(f&&confirm("Delete this fee entry?")){fees=fees.filter(x=>x.id!=id);save();renderFees()}};
+$("feeCancel").onclick=()=>{feeEditId=null;resetFee();$("feeSave").textContent="Save Fee";$("feeCancel").style.display="none";$("feeFormTitle").textContent="💳 Collect Dance Fee"};
+
+function renderFees(){let m=$("filterMonth").value;let list=fees.filter(f=>f.month===m).sort((a,b)=>b.paymentDate.localeCompare(a.paymentDate));$("activeStudents").textContent=students.filter(s=>s.status==="Active").length;$("paidRecords").textContent=list.filter(f=>f.status==="Paid").length;$("pendingRecords").textContent=list.filter(f=>f.status!=="Paid").length;$("collection").textContent=money(list.reduce((n,f)=>n+Number(f.amount||0),0));
+$("feeTable").innerHTML=list.length?list.map(f=>`<tr><td>${esc(f.paymentDate)}</td><td><b>${esc(f.studentName)}</b></td><td>${esc(f.month)}</td><td>${money(f.expectedFee)}</td><td class="green"><b>${money(f.amount)}</b></td><td><span class="badge">${esc(f.status)}</span></td><td>${esc(f.note||"-")}</td><td><button class="edit" onclick="editFee('${f.id}')">Edit</button> <button class="delete" onclick="deleteFee('${f.id}')">Delete</button></td></tr>`).join(""):'<tr><td colspan="8" class="empty">No fee records for this month.</td></tr>'}
+$("filterMonth").onchange=renderFees;
+
+$("joiningDate").value=today();$("date");$("feeMonth").value=currentMonth();$("paymentDate").value=today();$("filterMonth").value=currentMonth();load();
+if(!students.length){students=[{id:"ds1",name:"Aaradhya",teacher:"Duja Sonker",joiningDate:today(),currentFee:1500,status:"Active",note:"Demo student"},{id:"ds2",name:"Ananya",teacher:"Duja Sonker",joiningDate:today(),currentFee:1500,status:"Active",note:"Demo student"},{id:"ds3",name:"Vivaan",teacher:"Duja Sonker",joiningDate:today(),currentFee:2000,status:"Active",note:"Demo student"}];
+fees=[{id:"df1",studentId:"ds1",studentName:"Aaradhya",month:currentMonth(),paymentDate:today(),expectedFee:1500,amount:1500,status:"Paid",note:"Demo fee"}];save()}
+renderStudents();renderFees();
+</script>
+</body></html>
