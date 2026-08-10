@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Little Blossoms — Login</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:auto;background:#eadff4}
+.login-page{position:relative;width:100%;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:35px 18px;background:linear-gradient(rgba(45,20,65,.10),rgba(45,20,65,.10)),url("school-bg.jpg") center/cover no-repeat}
+.login-page:before{content:"";position:absolute;inset:0;background:rgba(255,245,255,.10);backdrop-filter:blur(1px)}
+.login-card{position:relative;z-index:1;width:min(460px,94vw);padding:42px 38px 34px;border:1px solid rgba(255,255,255,.60);border-radius:30px;background:rgba(255,255,255,.42);box-shadow:0 25px 70px rgba(48,25,70,.25);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);text-align:center}
+.logo{width:78px;height:78px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:48px;background:rgba(255,255,255,.38);border-radius:50%;border:1px solid rgba(255,255,255,.55);box-shadow:0 8px 25px rgba(60,30,80,.12)}
+h1{margin:0;font-size:38px;line-height:1.1;color:#7432a8;letter-spacing:-1px}.tagline{margin:10px 0 30px;color:#555;font-size:16px}
+.welcome{margin:0 0 7px;color:#d52786;font-size:28px;font-weight:800}.continue{margin:0 0 24px;color:#666;font-size:15px}
+.field{position:relative;margin:14px 0}.field input{width:100%;height:62px;border:1px solid rgba(120,110,130,.30);border-radius:16px;padding:0 52px 0 50px;outline:none;font-size:17px;color:#333;background:rgba(255,255,255,.48);transition:.2s}
+.field input:focus{border-color:#9b4bd0;background:rgba(255,255,255,.62);box-shadow:0 0 0 3px rgba(155,75,208,.12)}
+.field .left-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:23px;pointer-events:none}
+.eye{position:absolute;right:15px;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:22px;padding:6px}
+.login-btn{width:100%;height:62px;margin-top:10px;border:0;border-radius:16px;color:#fff;font-size:19px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#7626b9,#a33ed1);box-shadow:0 10px 25px rgba(112,38,170,.28);transition:.2s}
+.login-btn:hover{transform:translateY(-2px)}.error{display:none;margin-top:13px;padding:10px 12px;border-radius:10px;background:rgba(255,225,225,.72);color:#b32626;font-size:13px;font-weight:700}
+.footer{margin-top:30px;color:#555;font-size:13px}.footer span{color:#d52786}
+@media(max-width:600px){.login-page{padding:20px 12px}.login-card{width:100%;padding:32px 20px 27px;border-radius:24px;background:rgba(255,255,255,.38)}h1{font-size:32px}.welcome{font-size:25px}.tagline{font-size:14px;margin-bottom:24px}.field input{height:58px;font-size:16px}.login-btn{height:58px;font-size:18px}.logo{width:68px;height:68px;font-size:40px}}
+</style>
+</head>
+<body>
+<div class="login-page">
+<div class="login-card">
+<div class="logo">🌳</div>
+<h1>Little Blossoms</h1>
+<div class="tagline">Play School • Day Care • Learning with Love 💗</div>
+<div class="welcome">Welcome Back!</div>
+<div class="continue">Please login to continue</div>
+<form id="loginForm" autocomplete="off">
+<div class="field"><span class="left-icon">👤</span><input id="username" type="text" placeholder="User ID" autocomplete="username" required></div>
+<div class="field"><span class="left-icon">🔐</span><input id="password" type="password" placeholder="Password" autocomplete="current-password" required><button class="eye" type="button" id="togglePassword">👁️</button></div>
+<button class="login-btn" type="submit">🔐 &nbsp; LOGIN</button>
+<div class="error" id="error">Incorrect User ID or Password.</div>
+</form>
+<div class="footer">🌸 Nurturing Little Minds, Inspiring Bright Futures 🌸</div>
+</div>
+</div>
+<script>
+const USER_ID="Littleblossoms",PASSWORD="admin1234";
+document.getElementById("togglePassword").onclick=function(){const p=document.getElementById("password"),s=p.type==="text";p.type=s?"password":"text";this.textContent=s?"👁️":"🙈"};
+document.getElementById("loginForm").onsubmit=function(e){e.preventDefault();const u=document.getElementById("username").value.trim(),p=document.getElementById("password").value;if(u===USER_ID&&p===PASSWORD){sessionStorage.setItem("little_blossoms_logged_in","1");location.href="dashboard.html"}else{document.getElementById("error").style.display="block";document.getElementById("password").value=""}};
+</script>
+</body>
+</html>
